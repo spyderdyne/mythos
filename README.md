@@ -15,11 +15,18 @@ Mythos - Omnipotent Scale Testing for Cloud
     under the License.
 
 author:  James Scollard
+
 email:  jscollar@cisco.com
+
 source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
 
+slides:  https://docs.google.com/presentation/d/1MPUg2aYflHzPeJAd9w_QcwDNkoPB298IujfRoNgVaik/edit#slide=id.g73a8cba0b_0_88
 
-Mythos is a set of projects to perform scale and performance testing in Openstack.  Mythos is
+docs:  pending
+
+Mythos - Supernatural Testing for Cloud
+
+Mythos is a set of projects to perform scale and performance testing in cloud environmnets.  Mythos is
 comprised of the following projects:
 
 Janus - Roman god of beginnings, transitions, and endings.
