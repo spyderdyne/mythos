@@ -1,0 +1,10 @@
+#!/bin/bash
+
+while read f
+
+  do
+
+    scp -o StrictHostKeyChecking=no /opt/medusa/jmeter/jmeter.properties root@$f:/usr/share/jmeter/bin/jmeter.properties
+    ssh -o StrictHostKeyChecking=no root@$f 'killall java; screen -d -m jmeter -n -s -l jmeter.log'
+
+done < /opt/medusa/discovery/ip_addresses.dat

@@ -1,0 +1,30 @@
+# mythos-server - manage mythos server services
+#
+# This task starts phoronix components to be started
+# on boot.
+
+description     "start mythos server services"
+
+script
+  #start phoronix cache
+  /user/bin/phoronix-test-suite make-download-cache
+
+  #start phoromatic server
+  /usr/bin/phoronix-test-suite start-phoromatic-server
+
+end script
+
+start on startup or runlevel [2345]
+stop on shutdown  or runlevel [016]
+
+pre-start script
+# prepare environment
+mkdir -p /var/run/mythos
+end script
+
+post-stop script
+# clean up
+rm -rf /var/run/mythos
+end script
+
+console output

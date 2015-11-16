@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<!--Phoronix Test Suite v4.4.1 (Forsand)-->
+<?xml-stylesheet type="text/xsl" href="xsl/pts-user-config-viewer.xsl"?>
+<PhoronixTestSuite>
+    <Options>
+        <OpenBenchmarking>
+            <AnonymousUsageReporting>FALSE</AnonymousUsageReporting>
+            <AnonymousSoftwareReporting>FALSE</AnonymousSoftwareReporting>
+            <AnonymousHardwareReporting>FALSE</AnonymousHardwareReporting>
+            <IndexCacheTTL>3</IndexCacheTTL>
+            <AlwaysUploadSystemLogs>FALSE</AlwaysUploadSystemLogs>
+        </OpenBenchmarking>
+        <General>
+            <DefaultBrowser></DefaultBrowser>
+            <UsePhodeviCache>TRUE</UsePhodeviCache>
+            <DefaultDisplayMode>DEFAULT</DefaultDisplayMode>
+            <PhoromaticServers><%= @medusa_master_ip %>:<%= @phoronix_www_port %></PhoromaticServers>
+        </General>
+
+        <Modules>
+            <LoadModules>update_checker</LoadModules>
+        </Modules>
+        <Installation>
+            <RemoveDownloadFiles>FALSE</RemoveDownloadFiles>
+            <SearchMediaForCache>TRUE</SearchMediaForCache>
+            <SymLinkFilesFromCache>TRUE</SymLinkFilesFromCache>
+            <PromptForDownloadMirror>FALSE</PromptForDownloadMirror>
+            <EnvironmentDirectory>/var/lib/phoronix-test-suite/installed-tests/</EnvironmentDirectory>
+            <CacheDirectory>/var/lib/phoronix-test-suite/download-cache/</CacheDirectory>
+        </Installation>
+        <Testing>
+            <SaveSystemLogs>TRUE</SaveSystemLogs>
+            <SaveInstallationLogs>TRUE</SaveInstallationLogs>
+            <SaveTestLogs>TRUE</SaveTestLogs>
+            <RemoveTestInstallOnCompletion>FALSE</RemoveTestInstallOnCompletion>
+            <ResultsDirectory>~/.phoronix-test-suite/test-results/</ResultsDirectory>
+            <AlwaysUploadResultsToOpenBenchmarking>FALSE</AlwaysUploadResultsToOpenBenchmarking>
+            <AutoSortRunQueue>TRUE</AutoSortRunQueue>
+        </Testing>
+        <TestResultValidation>
+            <DynamicRunCount>TRUE</DynamicRunCount>
+            <LimitDynamicToTestLength>20</LimitDynamicToTestLength>
+            <StandardDeviationThreshold>3.50</StandardDeviationThreshold>
+            <ExportResultsTo></ExportResultsTo>
+        </TestResultValidation>
+        <BatchMode>
+            <SaveResults>FALSE</SaveResults>
+            <OpenBrowser>FALSE</OpenBrowser>
+            <UploadResults>FALSE</UploadResults>
+            <PromptForTestIdentifier>FALSE</PromptForTestIdentifier>
+            <PromptForTestDescription>FALSE</PromptForTestDescription>
+            <PromptSaveName>FALSE</PromptSaveName>
+            <RunAllTestCombinations>TRUE</RunAllTestCombinations>
+            <Configured>TRUE</Configured>
+        </BatchMode>
+        <Networking>
+            <NoNetworkCommunication>FALSE</NoNetworkCommunication>
+            <Timeout>20</Timeout>
+            <ProxyAddress></ProxyAddress>
+            <ProxyPort></ProxyPort>
+        </Networking>
+        <ServerOptions>
+            <RemoteAccessPort><%= @phoronix_master_port %></RemoteAccessPort>
+            <Password><%= @service_password %></Password>
+            <WebSocketPort><%= @phoronix_wsgi_port %></WebSocketPort>
+            <AdvertiseServiceZeroConf>TRUE</AdvertiseServiceZeroConf>
+        </ServerOptions>
+    </Options>
+</PhoronixTestSuite>

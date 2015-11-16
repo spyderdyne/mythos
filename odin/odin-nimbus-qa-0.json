@@ -1,0 +1,190 @@
+{
+    "VMBootPing.vm_boot_l3_ping": [
+        {
+            "args": {
+                "flavor": {
+                    "name": "GP3-Medium"
+                },
+                "image": {
+                    "name": "Ubuntu-14.04"
+                },
+                "floating_network": "public-floating-601",
+                "use_floating_ip": true,
+                "force_delete": true,
+                "delete_floating_ip": true,
+                "subnet_cidr_start": "30.1.1.0/16",
+                "write_floating_ip": false,
+                "external_gw": true
+            },
+            "runner": {
+                "type": "constant",
+                "times": 10,
+                "concurrency": 8
+            },
+            "context": {
+                "users": {
+                    "tenants": 10,
+                    "users_per_tenant": 2
+                },
+                "quotas": {
+                    "nova": {
+                        "instances": -1,
+                        "cores": -1,
+                        "ram": -1,
+                        "metadata_items": -1
+                    },
+                    "neutron": {
+                        "network": -1,
+                        "subnet": -1,
+                        "port": -1,
+                        "router": -1,
+                        "floatingip": -1,
+                        "security_group": -1,
+                        "security_group_rule": -1
+                    }
+                }
+            }
+        }
+    ],
+    "NovaServers.boot_server_from_volume": [
+      {
+        "runner": {
+          "type": "constant",
+          "concurrency": 8,
+          "times": 10
+        },
+        "args": {
+          "volume_size": 3,
+          "flavor": {
+            "name": "GP3-Medium"
+          },
+          "image": {
+            "name": "Ubuntu-14.04"
+          },
+          "force_delete": true
+        },
+        "context": {
+          "users": {
+            "user_domain": "default",
+            "project_domain": "default",
+            "user_password": "password",
+            "static_tenant_match": "ctx_rally",
+            "user_role": admin,
+            "use_static_users": false,
+            "static_username_match": "ctx_rally",
+            "use_static_tenants": false,
+            "users_per_tenant": 1,
+            "tenants": 10,
+            "resource_management_workers": 50,
+            "static_role": admin
+          },
+          "quotas": {
+            "nova": {
+              "metadata_items": -1,
+              "instances": -1,
+              "ram": -1,
+              "cores": -1
+            },
+            "neutron": {
+              "security_group_rule": -1,
+              "subnet": -1,
+              "network": -1,
+              "floatingip": -1,
+              "security_group": -1,
+              "router": -1,
+              "port": -1
+            }
+          }
+        }
+      }
+    ],
+    "VMStressWithVolume.boot_runstress_volume_test": [
+        {
+            "args": {
+                "volume_size": 3,
+                "flavor": {
+                    "name": "GP3-Medium"
+                },
+                "image": {
+                    "name": "Ubuntu-14.04"
+                },
+                "force_delete": true,
+                "use_floatingip": true,
+                "floating_network": "public-floating-601",
+                "username": "cloud-user",
+                "size": 3
+            },
+            "runner": {
+                "type": "constant",
+                "times": 10,
+                "concurrency": 8
+            },
+            "context": {
+                "users": {
+                    "tenants": 10,
+                    "users_per_tenant": 2
+                },
+                "network": {
+                    "start_cidr": "31.1.1.0/16"
+                }
+            }
+        }
+    ],
+    "VMLbaas.lbaas_basic_scenarios_and_benchmark": [
+        {
+            "args": {
+                "flavor": {
+                    "name": "GP3-Medium"
+                },
+                "image": {
+                    "name": "Ubuntu-14.04"
+                },
+                "auto_assign_nic": true,
+                "floating_network": "public-floating-601",
+                "use_floatingip": true,
+                "username": "cloud-user",
+                "instances": 10,
+                "provider": null,
+                "lb_method": "ROUND_ROBIN",
+                "lb_protocol": "HTTP",
+                "protocol_port": 8180,
+                "requests": 999,
+                "duration" : 180,
+                "concurrent" : 8,
+                "performance" : false,
+                "ha_vms" : 0,
+                "src_path" : "/opt/rally/rally/plugins/openstack/scenarios/vm_int/tools"
+            },
+            "runner": {
+                "type": "constant",
+                "times": 10,
+                "concurrency": 8
+            },
+            "context": {
+                "network": {
+                    "start_cidr": "31.1.1.0/16"
+                },
+                "users": {
+                    "tenants": 10,
+                    "users_per_tenant": 2
+                },
+            "quotas": {
+                    "nova": {
+                        "instances": -1,
+                        "cores": -1,
+                        "ram": -1
+                    },
+                    "neutron" : {
+                        "network" : -1,
+                        "subnet" : -1,
+                        "port" : -1,
+                        "router" : -1,
+                        "floatingip" : -1,
+                        "security_group" : -1,
+                        "security_group_rule": -1
+                    }
+                }
+            }
+        }
+    ]
+}

@@ -1,0 +1,1 @@
+- figure out bzr anonymous/dummy access to pull reoo contents down

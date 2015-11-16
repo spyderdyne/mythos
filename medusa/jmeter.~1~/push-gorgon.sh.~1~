@@ -1,0 +1,10 @@
+#!/bin/bash
+
+while read f
+
+  do
+
+    ssh -o StrictHostKeyChecking=no root@$f 'mkdir -p /opt/medusa/jmeter/tests'
+    scp -o StrictHostKeyChecking=no /opt/medusa/jmeter/tests/gorgon.jmx root@$f:/opt/medusa/jmeter/tests/gorgon.jmx
+
+done < /opt/medusa/discovery/ip_addresses.dat

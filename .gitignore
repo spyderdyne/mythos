@@ -1,0 +1,6 @@
+images/keys/*
+image/server/.vagrant
+images/slave/.vagrant
+images/workspace/*
+commit-hooks.sh
+mania/tempest

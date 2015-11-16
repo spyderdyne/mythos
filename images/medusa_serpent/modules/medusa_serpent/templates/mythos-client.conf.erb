@@ -1,0 +1,27 @@
+# mythos-client - manage mythos client services
+#
+# This task causes mythos client services
+# to be started on boot.
+
+description     "starts mythos client services"
+
+script
+  #connect to master server
+  /usr/sbin/phoronix-test-suite phoromatic.connect
+end script
+
+start on startup or runlevel [2345]
+stop on shutdown  or runlevel [016]
+
+pre-start script
+# prepare environment
+mkdir -p /var/run/mythos
+end script
+
+post-stop script
+# clean up
+rm -rf /var/run/mythos
+end script
+
+console output
+

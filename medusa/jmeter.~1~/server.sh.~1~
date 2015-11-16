@@ -1,0 +1,5 @@
+#!/bin/bash
+
+HOSTS=$(awk -vORS=, '{ print $1 }' /opt/medusa/discovery/ip_addresses.dat | sed 's/,$/\n/')
+
+jmeter -n -t /opt/medusa/jmeter/tests/gorgon.jmx -l /opt/medusa/jmeter/gorgon.log -R $HOSTS

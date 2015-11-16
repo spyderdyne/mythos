@@ -1,0 +1,1 @@
+- add an Openstack instance query option to generate the hosts lists locally before parsing

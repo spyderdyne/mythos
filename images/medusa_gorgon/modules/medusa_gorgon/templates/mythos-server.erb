@@ -1,0 +1,77 @@
+#!/bin/bash -e
+### BEGIN INIT INFO
+# Provides:          mythos-server
+# Required-Start:    $local_fs $remote_fs $network
+# Required-Stop:     $local_fs $remote_fs $network
+# Should-Start:      $named
+# Should-Stop:       $named
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start Mythos Server
+# Description:       Start Phoronix server and apache services.
+### END INIT INFO
+# Copyright 2015 Cisco Systems, Inc.  All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+#
+# author:  James Scollard
+# email:  jscollar@cisco.com
+# source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
+
+PATH="/sbin:/bin:/usr/bin:/usr/sbin"
+RUN_DIR="/var/run/mythos"
+
+case "$1" in
+start)
+
+    if init_is_upstart; then
+      exit 1
+    fi
+
+    #start phoronix cache
+    /user/bin/phoronix-test-suite make-download-cache
+
+    #start phoromatic server
+    /usr/bin/phoronix-test-suite start-phoromatic-server
+
+stop)
+    if init_is_upstart; then
+      exit 0
+    fi
+
+    #stop phoromatic server
+    /usr/bin/phoronix-test-suite stop-phoromatic-server
+
+restart)
+    if init_is_upstart; then
+      exit 1
+    fi
+
+    #restart phoromatic-server
+    /usr/bin/phoronix-test-suite start-phoromatic-server && /usr/bin/phoronix-test-suite stop-phoromatic-server
+
+status)
+    if init_is_upstart; then
+      exit 1
+    fi
+
+
+*)
+    echo "Usage: /etc/init.d/mythos-server {start|stop|restart}"
+    echo "stop, restart, and status are still broken..."
+    exit 1
+    ;;
+
+esac
+
+exit 0

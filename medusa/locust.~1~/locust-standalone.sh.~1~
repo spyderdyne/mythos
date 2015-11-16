@@ -1,0 +1,9 @@
+#!/bin/bash
+
+while read f
+
+  do
+
+      locust -f /opt/medusa/discovery/ip_address.dat --host=http://$f
+
+done < /opt/medusa/ip_addresses.dat

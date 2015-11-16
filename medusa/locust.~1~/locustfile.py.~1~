@@ -1,0 +1,31 @@
+import random
+from locust import HttpLocust, TaskSet
+
+def pick_winner(self):
+    lines = []
+    with open("/opt/medusa/discovery/ip_addresses.dat", "r") as f:
+        lines = f.readlines();
+    random_line_num = random.randrange(0, len(lines))
+    return lines[random_lines_num]
+
+def index(l):
+    l.client.get("/")
+
+class WebsiteUser(HttpLocust):
+    host = "https://%s" % lines
+    task_set = WebsiteTasks
+    min_wait = 1000 # time in ms
+    max_wait = 15000 # time in ms
+
+class WebsiteTasks(TaskSet):
+    @task(10)
+    def index(self):
+        self.client.get("/")
+
+import random
+def pick_winner(self):
+    lines = []
+    with open("file.txt", "r") as f:
+        lines = f.readlines();
+    random_line_num = random.randrange(0, len(lines))
+    return lines[random_lines_num]

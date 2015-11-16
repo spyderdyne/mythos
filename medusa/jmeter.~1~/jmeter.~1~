@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# Include the wrappers utility script
+. /usr/lib/java-wrappers/java-wrappers.sh
+
+set HEAP=-Xms1G -Xmx2G
+
+find_java_runtime
+
+find_jars /usr/share/jmeter/bin/ApacheJMeter.jar
+
+run_java -Djmeter.home=/usr/share/jmeter org.apache.jmeter.NewDriver "$@"
