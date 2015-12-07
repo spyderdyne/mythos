@@ -11,6 +11,7 @@ class medusa_gorgon {
   $phoronix_www_port    = '8081' #Phoronix Web Portal
   $medusa_master_port   = '8080' #Medusa Web Portal for Script Hosting
   $medusa_slave_port    = '80'   #Medusa Client web site for testing
+  $medusa_private_CIDR  = '192.168.0.0/24' #Subnet for client neighbor discovery
 
   $service_password     = 'Thewheelsonthebusgoroundandround2015!'
 
@@ -74,6 +75,14 @@ class medusa_gorgon {
   package { 'bzr':
     ensure  => present,
     require => Exec['apt-get update'],
+  }
+  package { 'libgd-graph-perl':
+  ensure  => present,
+  require => Exec['apt-get update'],
+}
+  package { 'libchart-perl':
+    ensure  => present,
+    require => Package['libgd-graph-perl'],
   }
   group { 'medusa':
     ensure  => present,
@@ -183,12 +192,28 @@ class medusa_gorgon {
     notify  => Service['apache2'],
     require => Exec['bzr-pull-repo'],
   }
-  file { '/opt/trunk/mythos/medusa/remote-scripts/client-init.sh':
+  file { '/opt/trunk/mythos/medusa/remote-scripts/.client-init.sh':
     ensure  => file,
     owner   => 'root',
     group   => 'root',
     mode    => '755',
-    content => template('medusa_gorgon/client-init.sh.erb'),
+    content => template('medusa_gorgon/.client-init.erb'),
+    require => File['/var/www/html/medusa/scripts/'],
+  }
+  file { '/opt/trunk/mythos/medusa/remote-scripts/.client-discovery.sh':
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '755',
+    content => template('medusa_gorgon/.client-discovery.erb'),
+    require => File['/var/www/html/medusa/scripts/'],
+  }
+  file { '/opt/trunk/mythos/medusa/remote-scripts/.bombardment0.sh':
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '755',
+    content => template('medusa_gorgon/bombardment0.erb'),
     require => File['/var/www/html/medusa/scripts/'],
   }
 }

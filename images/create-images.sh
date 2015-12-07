@@ -84,14 +84,28 @@ export VAGRANT_DEFUALT_PROVIDER='virtualbox'
 #Check for required software and install if needed (Ubuntu only at the moment)
 if [ $(dpkg-query -W -f='${Status}' vagrant 2>/dev/null | grep -c "ok installed") -eq 0 ];
   then
-  apt-get install -y vagrant build-essential
+  apt-get install -y vagrant
+fi
+
+#Check for required software and install if needed (Ubuntu only at the moment)
+if [ $(dpkg-query -W -f='${Status}' build-essential 2>/dev/null | grep -c "ok installed") -eq 0 ];
+  then
+  apt-get install -y build-essential
 fi
 
 #Install VBox for vagrant image building option
 if [ $(dpkg-query -W -f='${Status}' virtualbox 2>/dev/null | grep -c "ok installed") -eq 0 ];
   then
-  #apt-get install -y qemu-system qemu-kvm libvirt-bin virtinst virt-viewer; >> required by libvirt driver, disabled for vbox
-  apt-get install -y virtualbox
+    if [ $(apt-cache search | grep virtualbox) ];
+      then
+        #apt-get install -y qemu-system qemu-kvm libvirt-bin virtinst virt-viewer; >> required by libvirt driver, disabled for vbox
+        apt-get install -y virtualbox
+      else
+        apt-add-repository "deb http://download.virtualbox.org/virtualbox/debian vivid contrib"
+        wget -q https://www.virtualbox.org/download/oracle_vbox.asc -O- | sudo apt-key add -
+        apt-get update
+        apt-get install -y virtualbox
+    fi
 fi
 
 #if [ $(dpkg-query -W -f='${Status}' libxslt-dev 2>/dev/null | grep -c "ok installed") -eq 0 ];

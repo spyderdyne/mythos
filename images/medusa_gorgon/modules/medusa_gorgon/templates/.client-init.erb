@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 # Copyright 2015 Cisco Systems, Inc.  All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -22,35 +22,25 @@
 # email:  jscollar@cisco.com
 # source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
 
-import time
-timestr = time.strftime("%Y%m%d-%H%M%S")
-
 sleep $[ ( $RANDOM % 600 )  + 1 ]s
 
 #connect new client machines to the server for registration on spawn
-/usr/bin/phoronix-test-suite phoromatic.connect
+#/usr/bin/phoronix-test-suite phoromatic.connect
 
 #set random hostname
-#!/bin/bash
-
-HOST=`perl -e 'open IN, "</usr/share/dict/words";rand($.) < 1 && ($n=$_) while <IN>;$n=~s/'\''//g;print lc($n)'`
-DOMAIN=`perl -e 'open IN, "</usr/share/dict/words";rand($.) < 1 && ($n=$_) while <IN>;$n=~s/'\''//g;print lc($n)'`
-echo "New selected hostname is $HOST.$DOMAIN$timestr.com..."
-
-# Search/Repace hosts temp construct (template simply has strings HOST and DOMAIN in appropriate spots)
-cp /etc/hosts.template /etc/hosts
-sed -i 's/HOST/'$HOST'/g' /etc/hosts
-sed -i 's/DOMAIN/'$DOMAIN$timestr'/g' /etc/hosts
+HOST=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+DOMAIN=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+echo "New selected hostname is $HOST.$DOMAIN.com..."
 
 # Create a new hostname file
-echo "$HOST.$DOMAIN$timestr.com" > /etc/hostname
-
-#create reports directory on master
-ssh medusa_gorgon 'mkdir -p /opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN$timestr/'
+echo "$HOST.$DOMAIN.com" > /etc/hostname
 
 #insert registration time to results directory
-registered=`date +%y%m%d%H%M%S`
-data_file=/opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN$timestr/$HOST.$DOMAIN$timestr.dat
+#registered=`date +%y%m%d%H%M%S`
+mkdir -p /opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN
+data_file=/opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN/$HOST.$DOMAIN.dat
+
+touch $data_file
 
 #gather stats
 cat /etc/issue >> $data_file
@@ -58,6 +48,8 @@ uname -r >> $data_file
 free -m >> $data_file
 cat /proc/cpuinfo >> $data_file
 
-#log to server
-ssh medusa_gorgon "/sbin/cat >>$data_file" <$data_file
+#create reports directory on master
+/usr/bin/ssh medusa_gorgon "mkdir -p /opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN/"
 
+#log to server
+/usr/bin/scp $data_file medusa_gorgon:$data_file

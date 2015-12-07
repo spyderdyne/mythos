@@ -25,6 +25,10 @@ class medusa_serpent {
     ensure  => 'running',
     require => Package['apache2'],
   }
+  package { 'nmap':
+    ensure => present,
+    require => Exec['apt-get update'],
+  }
   file { '/etc/apache2/sites-available/000-default.conf':
     ensure  => file,
     content => template('medusa_serpent/000-default.erb'),
@@ -163,12 +167,20 @@ class medusa_serpent {
     content => template('medusa_serpent/mythos-client.conf.erb'),
     require => Exec['install-phoronix'],
   }
+  file { '/root/.siegerc':
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('medusa_serpent/siegerc.erb'),
+    require => Package['siege'],
+  }
   cron { 'update_cron':
     ensure  => 'present',
     command => '/opt/trunk/mythos/medusa/master-commander.sh',
     user    => 'root',
     hour    => '*',
-    minute  => '*/15',
+    minute  => '*/10',
     require => File['/opt/trunk/mythos/medusa/master-commander.sh'],
   }
 

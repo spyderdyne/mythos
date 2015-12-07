@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # Copyright 2015 Cisco Systems, Inc.  All rights reserved.
 #
@@ -26,7 +26,7 @@
 
 #source ~/mythos_environment.dat
 
-sleep $[ ( $RANDOM % 600 )  + 1 ]s #added a random sleep timer to keep slaves from flooding the server all at once
+/bin/sleep $[ ( $RANDOM % 600 )  + 1 ]s #added a random sleep timer to keep slaves from flooding the server all at once
 
 #wget -H -r -O $LOCATION http://<%= @medusa_master_ip %>/medusa/scripts/*
 (cd remote-scripts/ && wget -r --no-parent --reject "index.html*" http://<%= @medusa_master_ip %>/medusa/scripts/)
@@ -36,6 +36,6 @@ chmod +x remote-scripts/<%= @medusa_master_ip %>/medusa/scripts/*.sh
 for each in remote-scripts/<%= @medusa_master_ip %>/medusa/scripts/*.sh
   do
     [ -e $each.bak ] && rm -rf remote-scripts/<%= @medusa_master_ip %>/medusa/scripts/$each
-    bash remote-scripts/<%= @medusa_master_ip %>/medusa/scripts/$each
-    mv remote-scripts/<%= @medusa_master_ip %>/medusa/scripts/$each remote-scripts/<%= @medusa_master_ip %>/medusa/scripts/$each.bak
+    /bin/bash remote-scripts/<%= @medusa_master_ip %>/medusa/scripts/$each
+    /bin/mv remote-scripts/<%= @medusa_master_ip %>/medusa/scripts/$each remote-scripts/<%= @medusa_master_ip %>/medusa/scripts/$each.bak
   done

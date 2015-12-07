@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # Copyright 2015 Cisco Systems, Inc.  All rights reserved.
 #
@@ -18,15 +18,13 @@
 #email:  jscollar@cisco.com
 #source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythosexport
 
-#if grep -q MYTHOS_HOME "~/.mythsrc"; then
-#    source ~/.mythosrc
-#  else
-#    . ../../set-environment.sh
-#   clean_environments
-#   set_mythos_home
-#    source ~/.mythosrc
-#fi
+#HOSTNAME=$(/bin/echo $HOSTNAME)
 
-grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" /opt/trunk/mythos/medusa/discovery/discovered_hosts.txt > /opt/trunk/mythos/medusa/discovery/messy.dat
+#Discover local (private) hosts by web socket
+nmap -sL -p 80 -oN /opt/trunk/mythos/medusa/discovery/discovered_hosts.txt 192.168.0.0/24
 
-sort /opt/trunk/mythos/medusa/discovery/messy.dat | uniq -u > /opt/trunk/mythos/medusa/discovery/ip_addresses.dat
+#Call address parser to provide final hosts list
+/bin/bash /opt/trunk/mythos/medusa/discovery/address_parser.sh
+
+#Send local hosts list result to gorgon server
+#Is this needed?  I doubt it...
