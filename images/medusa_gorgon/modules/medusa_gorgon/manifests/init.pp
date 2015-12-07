@@ -142,7 +142,13 @@ class medusa_gorgon {
     require => File['/opt/trunk/'],
     returns => ['0','3'],
   }
-  file { '/var/lib/phoronix-test-suite/user-config.xml':
+  file { '/root/.phoronix-test-suite/user-config.xml':
+    ensure  => file,
+    content => template('medusa_gorgon/server-user-config.erb'),
+    require => Exec['phoronix-first-run'],
+  }
+  #Adding for multi-version support if needed...
+  file { '/user/share/phoronix-test-suite/user-config.xml':
     ensure  => file,
     content => template('medusa_gorgon/server-user-config.erb'),
     require => Exec['phoronix-first-run'],
@@ -213,7 +219,15 @@ class medusa_gorgon {
     owner   => 'root',
     group   => 'root',
     mode    => '755',
-    content => template('medusa_gorgon/bombardment0.erb'),
+    content => template('medusa_gorgon/.bombardment0.erb'),
+    require => File['/var/www/html/medusa/scripts/'],
+  }
+  file { '/opt/trunk/mythos/medusa/awaken_the_gorgon.sh':
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '755',
+    content => template('medusa_gorgon/awaken_the_gorgon.erb'),
     require => File['/var/www/html/medusa/scripts/'],
   }
 }

@@ -110,6 +110,7 @@ class medusa_serpent {
     ensure => present,
     require => Exec['fetch-phoronix-stable'],
   }
+  #May not be needed with the new version...
   exec { 'install-phoronix-deps':
     command => 'apt-get install -y libgd3 libxpm4 php5-cli php5-common php5-gd php5-json php5-readline php5-json',
     path    => '/bin:/sbin:/usr/bin:/usr/local/sbin:/usr/sbin',
@@ -133,9 +134,15 @@ class medusa_serpent {
     path    => '/bin/:/usr/bin/',
     require => Exec['install-phoronix'],
   }
-  file { '/var/lib/phoronix-test-suite/user-config.xml':
+  file { '/root/.phoronix-test-suite/user-config.xml':
     ensure  => file,
-    content => template('medusa_serpent/slave-user-config.erb'),
+    content => template('medusa_gorgon/server-user-config.erb'),
+    require => Exec['phoronix-first-run'],
+  }
+  #Adding for multi-version support if needed...
+  file { '/user/share/phoronix-test-suite/user-config.xml':
+    ensure  => file,
+    content => template('medusa_gorgon/server-user-config.erb'),
     require => Exec['phoronix-first-run'],
   }
   exec { 'start-phoronix-clients':
