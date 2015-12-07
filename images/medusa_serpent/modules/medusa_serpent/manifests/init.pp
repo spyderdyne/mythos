@@ -136,7 +136,7 @@ class medusa_serpent {
   }
   file { '/var/lib/phoronix-test-suite/user-config.xml':
     ensure  => file,
-    content => template('medusa_gorgon/slave-user-config.erb'),
+    content => template('medusa_serpent/slave-user-config.erb'),
     require => Exec['phoronix-first-run'],
   }
   exec { 'start-phoronix-clients':
