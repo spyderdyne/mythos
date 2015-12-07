@@ -148,7 +148,7 @@ class medusa_gorgon {
     require => Exec['phoronix-first-run'],
   }
   #Adding for multi-version support if needed...
-  file { '/user/share/phoronix-test-suite/user-config.xml':
+  file { '/var/lib/phoronix-test-suite/user-config.xml':
     ensure  => file,
     content => template('medusa_gorgon/server-user-config.erb'),
     require => Exec['phoronix-first-run'],

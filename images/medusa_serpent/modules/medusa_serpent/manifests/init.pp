@@ -136,13 +136,13 @@ class medusa_serpent {
   }
   file { '/root/.phoronix-test-suite/user-config.xml':
     ensure  => file,
-    content => template('medusa_gorgon/server-user-config.erb'),
+    content => template('medusa_gorgon/slave-user-config.erb'),
     require => Exec['phoronix-first-run'],
   }
   #Adding for multi-version support if needed...
-  file { '/user/share/phoronix-test-suite/user-config.xml':
+  file { '/var/lib/phoronix-test-suite/user-config.xml':
     ensure  => file,
-    content => template('medusa_gorgon/server-user-config.erb'),
+    content => template('medusa_gorgon/slave-user-config.erb'),
     require => Exec['phoronix-first-run'],
   }
   exec { 'start-phoronix-clients':
