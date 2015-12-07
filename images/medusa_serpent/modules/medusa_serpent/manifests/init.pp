@@ -134,12 +134,6 @@ class medusa_serpent {
     path    => '/bin/:/usr/bin/',
     require => Exec['install-phoronix'],
   }
-  file { '/root/.phoronix-test-suite/user-config.xml':
-    ensure  => file,
-    content => template('medusa_gorgon/slave-user-config.erb'),
-    require => Exec['phoronix-first-run'],
-  }
-  #Adding for multi-version support if needed...
   file { '/var/lib/phoronix-test-suite/user-config.xml':
     ensure  => file,
     content => template('medusa_gorgon/slave-user-config.erb'),

@@ -142,12 +142,6 @@ class medusa_gorgon {
     require => File['/opt/trunk/'],
     returns => ['0','3'],
   }
-  file { '/root/.phoronix-test-suite/user-config.xml':
-    ensure  => file,
-    content => template('medusa_gorgon/server-user-config.erb'),
-    require => Exec['phoronix-first-run'],
-  }
-  #Adding for multi-version support if needed...
   file { '/var/lib/phoronix-test-suite/user-config.xml':
     ensure  => file,
     content => template('medusa_gorgon/server-user-config.erb'),
