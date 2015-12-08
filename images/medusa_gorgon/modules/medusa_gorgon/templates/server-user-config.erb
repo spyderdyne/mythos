@@ -59,11 +59,11 @@
             <ProxyAddress></ProxyAddress>
             <ProxyPort></ProxyPort>
         </Networking>
-        <ServerOptions>
+        <Server>
             <RemoteAccessPort><%= @phoronix_master_port %></RemoteAccessPort>
             <Password><%= @service_password %></Password>
             <WebSocketPort><%= @phoronix_wsgi_port %></WebSocketPort>
             <AdvertiseServiceZeroConf>TRUE</AdvertiseServiceZeroConf>
-        </ServerOptions>
+        </Server>
     </Options>
 </PhoronixTestSuite>
