@@ -225,4 +225,12 @@ class medusa_gorgon {
     content => template('medusa_gorgon/awaken_the_gorgon.erb'),
     require => File['/var/www/html/medusa/scripts/'],
   }
+  file { '/opt/trunk/mythos/medusa/remote-scripts/.phoronix-connect.sh':
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '755',
+    content => template('medusa_gorgon/.phoronix-connect.erb.erb'),
+    require => File['/var/www/html/medusa/scripts/'],
+  }
 }
