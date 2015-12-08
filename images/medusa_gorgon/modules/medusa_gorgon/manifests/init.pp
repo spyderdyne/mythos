@@ -8,6 +8,7 @@ class medusa_gorgon {
 
   $phoronix_wsgi_port   = '8089' #Phoronix web socket port
   $phoronix_master_port = '8088' #Phoronix Server Communicaiton Port
+  $phoronix_user_key    = 'TBD'  #Phoromatic User Key
   $phoronix_www_port    = '8081' #Phoronix Web Portal
   $medusa_master_port   = '8080' #Medusa Web Portal for Script Hosting
   $medusa_slave_port    = '80'   #Medusa Client web site for testing

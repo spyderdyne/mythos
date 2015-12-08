@@ -31,7 +31,7 @@
 #wget -H -r -O $LOCATION http://<%= @medusa_master_ip %>/medusa/scripts/*
 #/bin/sleep $[ ( $RANDOM % 600 )  + 1 ]s #added a random sleep timer to keep slaves from flooding the server all at once
 
-#wget -H -r -O $LOCATION http://144.254.104.131/medusa/scripts/*
+#wget -H -r -O $LOCATION http://<%= @medusa_master_ip %>/medusa/scripts/*
 (cd /opt/trunk/mythos/medusa/remote-scripts/ && wget -r --no-parent --reject "index.html*" http://<%= @medusa_master_ip %>1/scripts/)
 
 chmod +x /opt/trunk/mythos/medusa/remote-scripts/<%= @medusa_master_ip %>/scripts/*.sh
