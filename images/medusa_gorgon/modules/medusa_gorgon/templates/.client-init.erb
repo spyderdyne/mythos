@@ -37,19 +37,28 @@ echo "$HOST.$DOMAIN.com" > /etc/hostname
 
 #insert registration time to results directory
 #registered=`date +%y%m%d%H%M%S`
-mkdir -p /opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN
-data_file=/opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN/$HOST.$DOMAIN.dat
+/bin/mkdir -p /opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN
 
-touch $data_file
+data_file='/opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN/$HOST.$DOMAIN.dat'
 
-#gather stats
+/usr/bin/touch $data_file
+
+#gather serpent instance info for use in comparing different flavors, etc. in reporting metrics
 cat /etc/issue >> $data_file
 uname -r >> $data_file
 free -m >> $data_file
 cat /proc/cpuinfo >> $data_file
+#capture ip info including MAC address since this is a good identifier for debugging connections to server...
+ifconfig eth0 >> $data_file
 
 #create reports directory on master
-/usr/bin/ssh medusa_gorgon "mkdir -p /opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN/"
+until /usr/bin/ssh medusa_gorgon "mkdir -p /opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN/"
+  do
+    sleep 10
+  done
 
 #log to server
-/usr/bin/scp $data_file medusa_gorgon:$data_file
+until /usr/bin/scp $data_file medusa_gorgon:$data_file
+  do
+    sleep 10
+  done

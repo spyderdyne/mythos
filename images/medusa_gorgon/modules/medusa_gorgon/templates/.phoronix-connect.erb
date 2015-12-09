@@ -25,8 +25,14 @@
 
 timestamp=$(date -u)
 
-/usr/bin/phoronix-test-suite phoromatic.connect <%= @medusa_master_ip %>:<%= phoronix_master_port %>/<%= @phoronix_user_key %> $2>1 &
+until /usr/bin/phoronix-test-suite phoromatic.connect <%= @medusa_master_ip %>:<%= phoronix_master_port %>/<%= @phoronix_user_key %> $2>1 &
+  do
+    sleep 30
+  done
 
 echo "$timestamp Client $HOSTNAME connected to Phoromatic Server at <%= @medusa_master_ip %>:<%= phoronix_master_port %>" >> /opt/trunk/mythos/seshat/clients/$HOSTNAME/phoromatic_registration.dat
 
-scp /opt/trunk/mythos/seshat/clients/$HOSTNAME/phoromatic_registration.dat medusa_gorgon:/opt/trunk/mythos/seshat/$HOSTNAME/phoromatic_registration.dat
+until scp /opt/trunk/mythos/seshat/clients/$HOSTNAME/phoromatic_registration.dat medusa_gorgon:/opt/trunk/mythos/seshat/$HOSTNAME/phoromatic_registration.dat
+  do
+    sleep 10
+  done

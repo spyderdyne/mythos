@@ -182,7 +182,7 @@ class medusa_gorgon {
     returns => ['0','126'],
   }
   exec { 'start-phoronix-cache':
-    command => 'phoronix-test-suite make-download-cache',
+    command => 'phoronix-test-suite make-download-cache pts/C-Ray pts/pybench-1.0.0 pts/stream pts/tiobench-1.1.0 pts/network-loopback-1.0.1',
     path    => '/usr/bin/',
     require => Exec['start-phoronix-server'],
     returns => ['0','126'],

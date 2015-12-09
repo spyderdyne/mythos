@@ -18,13 +18,17 @@
 #email:  jscollar@cisco.com
 #source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythosexport
 
-#HOSTNAME=$(/bin/echo $HOSTNAME)
+hosts_list='/opt/trunk/mythos/medusa/discovery/discovered_hosts.txt'
+#HOSTNAME=$(/bin/echo $HOSTNAME) #THIS DOESNT DO ANYTHING...
 
 #Discover local (private) hosts by web socket
-nmap -sL -p 80 -oN /opt/trunk/mythos/medusa/discovery/discovered_hosts.txt 192.168.0.0/24
+until nmap -sL -p 80 -oN /opt/trunk/mythos/medusa/discovery/discovered_hosts.txt 192.168.0.0/24
 
 #Call address parser to provide final hosts list
-/bin/bash /opt/trunk/mythos/medusa/discovery/address_parser.sh
+/opt/trunk/mythos/medusa/discovery/address_parser.sh
 
 #Send local hosts list result to gorgon server
-#Is this needed?  I doubt it...
+until /usr/bin/scp $hosts_list medusa_gorgon:/opt/trunk/mythos/seshat/clients/$HOSTNAME/discovered_hosts.txt
+  do
+    sleep 10
+  done
