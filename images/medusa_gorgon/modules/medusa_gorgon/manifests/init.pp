@@ -192,7 +192,7 @@ class medusa_gorgon {
     ensure  => file,
     owner   => 'root',
     group   => 'root',
-    mode    => '0755',
+    mode    => '0644',
     content => template('medusa_gorgon/mythos-server-conf.erb'),
     require => Exec['install-phoronix'],
   }
@@ -230,6 +230,13 @@ class medusa_gorgon {
     target  => '/opt/trunk/mythos/seshat/',
     notify  => Service['apache2'],
     require => Exec['bzr-pull-repo'],
+  }
+  file { '.htaccess':
+    ensure  => present,
+    path    => ['/var/www/html/reporting/reports/generator/','/var/www/html/reporting/settings'],
+    content => template('medusa_gorgon/htaccess.erb'),
+    notify  => Service['apache2'],
+    require => Exec[''],
   }
   file { '/opt/trunk/mythos/medusa/remote-scripts/.client-init.sh':
     ensure  => file,
