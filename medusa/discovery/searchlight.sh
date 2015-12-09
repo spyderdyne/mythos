@@ -31,10 +31,10 @@
 #    source ~/.mythosrc
 #fi
 
-MYTHOS_HOME=/opt/trunk/mythos
+source ../../set_environment.sh
 
 #discover hosts on local networks
-nmap -p 80 192.168.0.0/24 --exclude 192.168.0.1 > $MYTHOS_HOME/medusa/discovery/discovered_hosts.txt
+nmap -p 80 192.168.0.0/24 --exclude 192.168.0.1 > $medusa_home/discovery/discovered_hosts.txt
 
 #Clean host lists to only include addresses/DNS names
-$MYTHOS_HOME/medusa/discovery/address_parser.sh
+$medusa_home/discovery/address_parser.sh

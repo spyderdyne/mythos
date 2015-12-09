@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 # Copyright 2015 Cisco Systems, Inc.  All rights reserved.
 #
@@ -16,7 +16,9 @@
 #
 #author:  James Scollard
 #email:  jscollar@cisco.com
-#source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythosexport
+#source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
+
+source ../../set_environment.sh
 
 /bin/echo "The Gorgon Awakens..."
 /bin/echo " "
@@ -26,13 +28,13 @@
 
 #register clients
 /bin/echo "Registering Serpent Nodes to the Gorgon..."
-/bin/mv /opt/trunk/mythos/medusa/remote-scripts/.client-init.sh /opt/trunk/mythos/medusa/remote-scripts/client-init.sh
+/bin/mv $medusa_home/remote-scripts/.client-init.sh $medusa_home/remote-scripts/client-init.sh
 #/bin/sleep 300
 
 
 #perform private hosts discovery
 /bin/echo "Rallying Serpent Nodes using NMAP discovery of Local Subnets..."
-/bin/mv /opt/trunk/mythos/medusa/remote-scripts/.client-discovery.sh /opt/trunk/mythos/medusa/remote-scripts/client-discovery.sh
+/bin/mv $medusa_home/remote-scripts/.client-discovery.sh $medusa_home/remote-scripts/client-discovery.sh
 #/bin/sleep 300
 
 #start phoromatic server and web interface

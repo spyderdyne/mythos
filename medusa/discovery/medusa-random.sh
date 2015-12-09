@@ -18,17 +18,10 @@
 #email:  jscollar@cisco.com
 #source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
 
-if grep -q MYTHOS_HOME "~/.mythsrc"; then
-    source ~/.mythosrc
-  else
-    . ../../set-environment.sh
-    clean_environments
-    set_mythos_home
-    source ~/.mythosrc
-fi
+source ../../set_environment.sh
 
-for i in `cat $MYTHOS_HOME/medusa/discovery/medusa-slaves.dat`
+#randomize host lists for pushing test lists to clients
+for i in `cat $medusa_home/discovery/medusa-slaves.dat`
   do
     echo "$RANDOM $i"
-done | sort | sed -r 's/^[0-9]+ //' > $MYTHOS_HOME/medusa/discovery/serpents.dat
-
+done | sort | sed -r 's/^[0-9]+ //' > $medusa_home/discovery/serpents.dat

@@ -24,7 +24,7 @@
 # sure not to execute any of them twice.  Scripts on the master node file server will append
 # a timestamp form $date to ensure uniqueness and to track slave executions.
 
-#source ~/mythos_environment.dat
+source ../../set_environment.sh
 
 /bin/sleep $[ ( $RANDOM % 600 )  + 1 ]s #added a random sleep timer to keep slaves from flooding the server all at once
 
@@ -32,11 +32,11 @@
 #/bin/sleep $[ ( $RANDOM % 600 )  + 1 ]s #added a random sleep timer to keep slaves from flooding the server all at once
 
 #wget -H -r -O $LOCATION http://<%= @medusa_master_ip %>/medusa/scripts/*
-(cd /opt/trunk/mythos/medusa/remote-scripts/ && wget -r --no-parent --reject "index.html*" http://<%= @medusa_master_ip %>1/scripts/)
+(cd $medusa_home/remote-scripts/ && wget -r --no-parent --reject "index.html*" http://<%= @medusa_master_ip %>1/scripts/)
 
-chmod +x /opt/trunk/mythos/medusa/remote-scripts/<%= @medusa_master_ip %>/scripts/*.sh
+chmod +x $medusa_home/remote-scripts/<%= @medusa_master_ip %>/scripts/*.sh
 
-for each in /opt/trunk/mythos/medusa/remote-scripts/<%= @medusa_master_ip %>/scripts/*.sh
+for each in $medusa_home/remote-scripts/<%= @medusa_master_ip %>/scripts/*.sh
   do
     if /usr/bin/test -e "$each.bak"
       then

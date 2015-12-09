@@ -23,6 +23,7 @@
 # script available to clients.
 #
 
+source ../../set_environment.sh
 timestamp=$(date -u)
 
 until /usr/bin/phoronix-test-suite phoromatic.connect <%= @medusa_master_ip %>:<%= phoronix_master_port %>/<%= @phoronix_user_key %> $2>1 &

@@ -17,8 +17,17 @@
 #email:  jscollar@cisco.com
 #source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
 #
-# Sets the master "floating" IP address that will be assigned to the master server
+# Finds the master "floating" IP address that will be assigned to the master server.
 
-cat medusa_gorgon/modules/medusa_gorgon/manifests/init.pp | grep master_ip
+source ../set_environment.sh
 
-cat medusa_serpent/modules/medusa_serpent/manifests/init.pp | grep master_ip
+gorgon_master_address=$(cat $mythos_home/images/medusa_gorgon/modules/medusa_gorgon/manifests/init.pp | grep master_ip)
+serpent_master_address=$(cat $mythos_home/images/medusa_serpent/modules/medusa_serpent/manifests/init.pp | grep master_ip)
+
+#display master address
+echo "Gorgon public address as set in Gorgon module config: $gorgon_master_address"
+
+#display serpent address
+echo "Gorgon public address as set in Serpent module config: $serpent_master_address"
+
+

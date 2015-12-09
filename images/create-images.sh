@@ -23,6 +23,8 @@
 # email:  jscollar@cisco.com
 # source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
 
+source ../set-environment.sh
+
 GORGON_IMAGE='medusa_gorgon'
 GORGON_IMAGE_URI='https://cloud-images.ubuntu.com/vagrant/vivid/current/vivid-server-cloudimg-amd64-vagrant-disk1.box'
 SERPENT_IMAGE='medusa_serpent'
@@ -34,10 +36,7 @@ SERPENT_IMAGE_URI='https://cloud-images.ubuntu.com/vagrant/vivid/current/vivid-s
 #set_mythos_home
 #add_source_variables
 
-
-source ~/.mythosrc
-
-MYTHOS_HOME='/opt/trunk/mythos'
+#MYTHOS_HOME='/opt/trunk/mythos' <- replaced in foavor of sourcing the set-environment.sh file
 
 #configure the final master endpoint
 printf "Your new client image will need to know where the master node can\n
@@ -45,6 +44,8 @@ be reached.  You can specify an IP address or DNS name now.  If\n
 you do not you will need to manually set your images to use the\n
 correct address before uploading them to the cloud.  Please see\n
 the Mythos project documentation for more information.\n"
+
+exec "./verify_master_address.sh"
 
 read -p "Would you like to set the master address at this time? (Y/n): " set_master_addy
   case $set_master_addy in
@@ -213,7 +214,7 @@ echo "Creating Instances and Provisioning Components"
 function image_init() {
   for arg in $@
     do
-      cd /opt/trunk/mythos/images/$arg/
+      cd $mythos_home/images/$arg/
       vagrant up $arg --provision
       #vagrant halt $arg #comment out for manifest troubleshooting...
       read -p "Convert the image to another format? It is currently a virtualbox machine.  Depending on the source of your image it may not be usable on any other hypervisor. (Y/n) " do_convert
@@ -234,7 +235,7 @@ function image_init() {
             echo "setting VM 'pretty name' for $arg"
             vboxmanage modifyvm $MACHINE_IMAGE --name $arg
             echo "Time to convert the clone..."
-            vboxmanage clonehd --format RAW '~/VirtualBox\ VMs/$arg/box-disk1.vmdk' /opt/trunk/mythos/images/workspace/$arg.img
+            vboxmanage clonehd --format RAW '~/VirtualBox\ VMs/$arg/box-disk1.vmdk' $mythos_home/images/workspace/$arg.img
             echo "Converting $arg image to RAW format."
             echo "Image $arg renamed from the ugly VBox standard and converted to RAW format.  This file is huge now. Time to convert to final image format..."
 
@@ -264,8 +265,8 @@ function image_init() {
 image_init 'medusa_gorgon' 'medusa_serpent'
 
 #Create Images using DIB
-#time DIB_RELEASE=vivid disk-image-create -o $MYTHOS_HOME/images/medusa_gorgon/workspace/medusa_gorgon.qcow2 vm ubuntu
-#time DIB_RELEASE=vivid disk-image-create -o $MYTHOS_HOME/images/medusa_serpent/workspace/medusa_serpent.qcow2 vm debian
+#time DIB_RELEASE=vivid disk-image-create -o $mythos_home/images/medusa_gorgon/workspace/medusa_gorgon.qcow2 vm ubuntu
+#time DIB_RELEASE=vivid disk-image-create -o $mythos_home/images/medusa_serpent/workspace/medusa_serpent.qcow2 vm debian
 
 
 echo "Medusa Instance Provisioning Steps Completed."
@@ -274,27 +275,27 @@ sleep 3
 
 function perform_conversion() {
   case $convert_format in
-    1|QCOW2) { qemu-img convert -f raw $MYTHOS_HOME/images/workspace/$arg.img -O qcow2 $MYTHOS_HOME/images/workspace/$arg.qcow2; echo "Converting $arg to QCOW2"; } &
+    1|QCOW2) { qemu-img convert -f raw $mythos_home/images/workspace/$arg.img -O qcow2 $mythos_home/images/workspace/$arg.qcow2; echo "Converting $arg to QCOW2"; } &
              wait
              echo "Qemulator image copied to workpsace"
              ;;
 
-    2|VMDK)  { qemu-img convert -f raw $MYTHOS_HOME/images/workspace/$arg.img -O vmdk $MYTHOS_HOME/images/workspace/$arg.vmdk; echo "Converting $arg to VMDK"; } &
+    2|VMDK)  { qemu-img convert -f raw $mythos_home/images/workspace/$arg.img -O vmdk $mythos_home/images/workspace/$arg.vmdk; echo "Converting $arg to VMDK"; } &
              wait
              echo "VMWare images copied to workpsace"
              ;;
 
-    3|VPC)   { qemu-img convert -f raw $MYTHOS_HOME/images/workspace/$arg.img -O vpc $MYTHOS_HOME/images/workspace/$arg.vpc; echo "Converting $arg to VPC"; } &
+    3|VPC)   { qemu-img convert -f raw $mythos_home/images/workspace/$arg.img -O vpc $mythos_home/images/workspace/$arg.vpc; echo "Converting $arg to VPC"; } &
              wait
              echo "HyperV images copied to workpsace"
              ;;
 
-    4|QED)   { qemu-img convert -f raw $MYTHOS_HOME/images/workspace/$arg.img -O qed $MYTHOS_HOME/images/workspace/$arg.qed; echo "Converting $arg to QED"; } &
+    4|QED)   { qemu-img convert -f raw $mythos_home/images/workspace/$arg.img -O qed $mythos_home/images/workspace/$arg.qed; echo "Converting $arg to QED"; } &
              wait
              echo "KVM images copied to workpsace"
              ;;
 
-    5|VDI)   { cp ~/Virtualbox \VMs/$arg/$arg.disk1.box $MYTHOS_HOME/images/workspace/$arg.disk1.box; echo "Copying $arg to Workspace"; } &
+    5|VDI)   { cp ~/Virtualbox \VMs/$arg/$arg.disk1.box $mythos_home/images/workspace/$arg.disk1.box; echo "Copying $arg to Workspace"; } &
              wait
              echo "VBox files copied to workspace"
              ;;
@@ -310,9 +311,9 @@ function perform_conversion() {
 
 read -p "Would you like to push your images to a cloud environment? (Y/n)" manage_images
   case $manage_images in
-        Y|y ) (exec '$MYTHOS_HOME/janus/local/cloud-management/manage-images.sh')
+        Y|y ) (exec '$mythos_home/janus/local/cloud-management/manage-images.sh')
                 ;;
-        N|n ) echo "Your images are located in $MYTHOS_HOME/images/workspace."
+        N|n ) echo "Your images are located in $mythos_home/images/workspace."
                 ;;
         * )     echo "Please answer (Y/n)."
                 exit 1

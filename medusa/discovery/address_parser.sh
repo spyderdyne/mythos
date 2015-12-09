@@ -27,6 +27,10 @@
 #    source ~/.mythosrc
 #fi
 
-grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" /opt/trunk/mythos/medusa/discovery/discovered_hosts.txt > /opt/trunk/mythos/medusa/discovery/messy.dat
+source ../../set_environment.sh
 
-sort /opt/trunk/mythos/medusa/discovery/messy.dat | uniq -u > /opt/trunk/mythos/medusa/discovery/ip_addresses.dat
+#find IP addresses in nasty results files and save them
+grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}" $medusa_home/discovery/discovered_hosts.txt > $mythos_home/discovery/messy.dat
+
+#groom the results and output to a clean file with only one of each address
+sort $medusa_home/discovery/messy.dat | uniq -u > $medusa_home/discovery/ip_addresses.dat
