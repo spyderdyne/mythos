@@ -38,11 +38,11 @@ SERPENT_IMAGE_URI='https://cloud-images.ubuntu.com/vagrant/vivid/current/vivid-s
 
 #MYTHOS_HOME='/opt/trunk/mythos' <- replaced in foavor of sourcing the set-environment.sh file
 
-#configure the final master endpoint
+#Configure the master endpoint address
 printf "Your new client image will need to know where the master node can\n
 be reached.  You can specify an IP address or DNS name now.  If\n
 you do not you will need to manually set your images to use the\n
-correct address before uploading them to the cloud.  Please see\n
+correct address before uploading them to your  cloud.  Please see\n
 the Mythos project documentation for more information.\n"
 
 exec "./verify_master_address.sh"
@@ -55,6 +55,27 @@ read -p "Would you like to set the master address at this time? (Y/n): " set_mas
     N|n) echo "Please make sure to set it later or your instances will not know who to talk to..." ;;
 
       *) echo "Please choose Y or n. "
+         exit 1
+         ;;
+  esac
+
+#Configure the user accounts
+printf "You need to secure the services on your server image.\n
+You can specify account credentials now.  If\n
+you do not you will need to manually set your images to use the\n
+correct accounts before uploading them to your cloud.  Please see\n
+the Mythos project documentation for more information.\n"
+
+#exec "./verify_credentials.sh"
+
+read -p "Would you like to configure account access to your instances at this time? (Y/n): " set_credentials
+  case $set_credentials in
+
+    Y|y) ( exec "./set-credentials.sh" ) ;;
+
+    N|n) echo "Please make sure to set up accounts before deploying images, or you will not be able to access your test results" ;;
+
+      *) echo "Please choose Y/y or N/n. "
          exit 1
          ;;
   esac

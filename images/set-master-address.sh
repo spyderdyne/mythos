@@ -24,6 +24,18 @@ echo "please input the IP address you want to use for your master node.  This ad
 
 read master_float
 
+source ../set-environment.sh
+
+# Set the base environment setting if the master IP has changed
+if [ $master_float = $medusa_master_ip ]
+  then
+    echo "Master IP Address Already set!  Moving on..."
+  else
+    sed -i "s/$medusa_master_ip/$master_float/g" "$mythos_home/set-environment.sh"
+    echo "The master IP address has been updated to $master_float"
+fi
+
+# Set Puppet manifests with the proper IP addresses
 sed -i "s/replace_ip_address/$master_float/g" "medusa_gorgon/modules/medusa_gorgon/manifests/init.pp"
 
 sed -i "s/replace_ip_address/$master_float/g" "medusa_serpent/modules/medusa_serpent/manifests/init.pp"

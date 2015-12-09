@@ -4,17 +4,20 @@
 #script for details.
 class medusa_gorgon {
 
-  $medusa_master_ip     = 'replace_ip_address' #You need to identify and set the globally reachable IP address of your Medusa server prior to generating images.
-
-  $phoronix_wsgi_port   = '8089' #Phoronix web socket port
-  $phoronix_master_port = '8088' #Phoronix Server Communicaiton Port
-  $phoronix_user_key    = 'TBD'  #Phoromatic User Key
-  $phoronix_www_port    = '8081' #Phoronix Web Portal
-  $medusa_master_port   = '8080' #Medusa Web Portal for Script Hosting
-  $medusa_slave_port    = '80'   #Medusa Client web site for testing
-  $medusa_private_CIDR  = '192.168.0.0/24' #Subnet for client neighbor discovery
-
-  $service_password     = 'Thewheelsonthebusgoroundandround2015!'
+  $medusa_master_ip             = 'replace_ip_address'                    # Globally reachable IP address of Gorgon server
+  $phoronix_wsgi_port           = '8089'                                  # Phoronix web socket port
+  $phoronix_master_port         = '8088'                                  # Phoronix Server Communicaiton Port
+  $phoronix_user_key            = 'TBD'                                   # Phoromatic User Key
+  $phoronix_www_port            = '8081'                                  # Not sure what this does...
+  $medusa_master_port           = '80'                                    # Medusa Web Portal for Script Hosting
+  $medusa_results_port          = '88'                                    # Secure Siege Results Page on Gorgon Server Node
+  $medusa_results_user_name     = 'replace_results_user_name'             # Medusa View-Only User
+  $medusa_results_admin_name    = 'replace_results_admin_name'            # Medusa Admin User
+  $medusa_results_user_pass     = 'replace_results_user_pass'             # Medusa User Password
+  $medusa_results_admin_pass    = 'replace_results_admin_pass'            # Medusa Admin Password
+  $medusa_slave_port            = '80'                                    # Medusa Client web site for testing
+  $medusa_private_CIDR          = '192.168.0.0/24'                        # Subnet for client neighbor discovery
+  $service_password             = 'Thewheelsonthebusgoroundandround2015!' # Phoronix master password
 
   exec { 'apt-get update':
     path => '/usr/bin',
@@ -23,6 +26,10 @@ class medusa_gorgon {
     ensure  => present,
     require => Exec['apt-get update'],
   }
+  package { 'apache2-utils':
+    ensure  => present,
+    require => Package['apache2'],
+  }
   service { 'apache2':
     ensure  => running,
     require => Package['apache2'],
@@ -30,7 +37,7 @@ class medusa_gorgon {
   file { '/etc/apache2/sites-available/000-default.conf':
     ensure  => file,
     content => template('medusa_gorgon/000-default.erb'),
-    require => Package['apache2'],
+    require => Package['apache2-utils'],
     notify  => Service['apache2'],
     owner   => 'root',
     group   => 'root',
@@ -40,6 +47,21 @@ class medusa_gorgon {
     ensure  => 'link',
     target  => '/etc/apache2/sites-available/000-default.conf',
     require => File['/etc/apache2/sites-available/000-default.conf'],
+    notify  => Service['apache2'],
+  }
+  file { '/etc/apache2/sites-available/000-results.conf':
+    ensure  => file,
+    content => template('medusa_gorgon/000-results.erb'),
+    require => Package['apache2-utils'],
+    notify  => Service['apache2'],
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+  }
+  file { '/etc/apache2/sites-enabled/000-results.conf':
+    ensure  => 'link',
+    target  => '/etc/apache2/sites-available/000-results.conf',
+    require => File['/etc/apache2/sites-available/000-results.conf'],
     notify  => Service['apache2'],
   }
   file { '/var/www/html/medusa':
@@ -108,6 +130,16 @@ class medusa_gorgon {
     mode    => '600',
     require => User['medusa'],
     source  => 'puppet:///modules/medusa_gorgon/id_rsa_medusa.pub',
+  }
+  exec { 'configure-user-auth':
+    command => 'echo "$medusa_results_user_pass $medusa_results_user_pass" | htpasswd -c /etc/apache2/.htpasswd $medusa_results_user_name',
+    path    => '/usr/bin',
+    require => Package['apache2-utils'],
+  }
+  exec { 'configure-admin-auth':
+    command => 'echo "$medusa_results_admin_pass $medusa_results_admin_pass" | htpasswd /etc/apache2/.htpasswd $medusa_results_admin_name',
+    path    => '/usr/bin',
+    require => Package['apache2-utils'],
   }
   exec { 'configure-auth':
     command => 'cat /root/.ssh/id_rsa_medusa.pub >> /root/.ssh/authorized_keys',
@@ -190,6 +222,12 @@ class medusa_gorgon {
   file { '/var/www/html/medusa/scripts/':
     ensure  => 'link',
     target  => '/opt/trunk/mythos/medusa/remote-scripts/',
+    notify  => Service['apache2'],
+    require => Exec['bzr-pull-repo'],
+  }
+  file { '/var/www/html/reporting/':
+    ensure  => 'link',
+    target  => '/opt/trunk/mythos/seshat/',
     notify  => Service['apache2'],
     require => Exec['bzr-pull-repo'],
   }
