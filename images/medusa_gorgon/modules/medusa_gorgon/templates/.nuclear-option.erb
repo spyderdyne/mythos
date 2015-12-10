@@ -11,6 +11,9 @@
 #TEMPORARY!!!
 /bin/chmod +x /opt/trunk/mythos/set-environment.sh
 
+#set random timer to prevent all hosts from executing at the same time
+sleep $[ ( $RANDOM % 180 )  + 1 ]s
+
 source ../../../../../set-environment.sh
 
 #remove old .bak files
@@ -20,7 +23,5 @@ source ../../../../../set-environment.sh
 #(cd $mythos_home && /usr/bin/bzr update
 
 /bin/rm -rf $mythos_home/seshat/clients/*
-
-sleep $[ ( $RANDOM % 180 )  + 1 ]s
 
 /bin/reboot
