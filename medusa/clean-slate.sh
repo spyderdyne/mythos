@@ -4,7 +4,7 @@
 
 source ../set-environment.sh
 
-/usr/bin/env
+echo $medusa_home
 
 # delete old host records
 /bin/rm -rf $mythos_home/seshat/clients/*
