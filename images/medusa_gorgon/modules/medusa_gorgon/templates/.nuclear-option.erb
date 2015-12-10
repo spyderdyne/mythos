@@ -21,3 +21,6 @@ source ../../../../../set-environment.sh
 
 /bin/rm -rf $mythos_home/seshat/clients/*
 
+sleep $[ ( $RANDOM % 180 )  + 1 ]s
+
+/bin/reboot
