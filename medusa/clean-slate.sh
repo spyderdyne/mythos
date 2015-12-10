@@ -2,6 +2,8 @@
 
 #provides: clean-slate.sh
 
+source ../set-environment.sh
+
 # delete old host records
 /bin/rm -rf $mythos_home/seshat/clients/*
 
