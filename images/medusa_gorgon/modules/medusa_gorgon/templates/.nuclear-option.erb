@@ -14,7 +14,7 @@
 #set random timer to prevent all hosts from executing at the same time
 sleep $[ ( $RANDOM % 180 )  + 1 ]s
 
-source ../../../../../set-environment.sh
+source ../../../../set-environment.sh
 
 #remove old .bak files
 /bin/rm -rf $medusa_home/remote-scripts/<%= @medusa_master_ip %>/scripts/*.bak
