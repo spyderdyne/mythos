@@ -1,0 +1,105 @@
+#!/bin/bash -x
+# Copyright 2015 Cisco Systems, Inc.  All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+#
+# Medusa image creation script.  Execute this to generate master and slave
+# images for upload to your cloud provider in the proper format.
+#
+# This script currently requires Virtualbox to run
+#
+# author:  James Scollard
+# email:  jscollar@cisco.com
+# source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
+# provides: /opt/trunk/mythos/medusa/remote-scripts/ip/scripts/client-init.sh
+
+source ../../../../set-environment.sh
+
+sync_dir=$(ls $medusa_home/remote-scripts/ | grep -E -o "([0-9]{1,3}[\.]){3}[0-9]{1,3}")
+#/bin/sleep $[ ( $RANDOM % 539 )  + 1 ]s
+
+#set random hostname
+HOST=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+DOMAIN=$(cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1)
+/bin/echo "New selected hostname is ${HOST}.${DOMAIN}..."
+
+# Set the new hostname
+/bin/hostname "${HOST}.${DOMAIN}"
+echo "${HOST}.${DOMAIN}"
+data_file="/opt/trunk/mythos/seshat/clients/${HOST}.${DOMAIN}/${HOST}.${DOMAIN}.dat"
+echo $data_file
+client_dir="/opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN"
+echo $client_dir
+/bin/mkdir -p $client_dir
+
+# Create a new hostname file
+#/bin/echo "$HOST.$DOMAIN" > /etc/hostname
+
+#insert registration time to results directory
+registered_at=`date +%D-%H:%M:%S`
+/bin/mkdir -p /opt/trunk/mythos/seshat/clients/$HOST.$DOMAIN
+
+/usr/bin/touch $data_file
+
+#gather serpent instance info for use in comparing different flavors, etc. in reporting metrics
+
+/bin/echo "Instance Data for ${HOST}.${DOMAIN} Serpent Instance" >> $data_file
+
+# Set registration timestamp
+/bin/echo "Registration Timestamp:  ${registered_at}" >> $data_file
+
+# Serpent OS Release Version
+/bin/echo "OS Version/Release"  >> $data_file
+cat /etc/issue >> $data_file
+
+# Serpent Kernel Version
+/bin/echo "Kernel Version:" >> $data_file
+/bin/uname -r >> $data_file
+
+# Serpent Memory Stats
+/bin/echo "Memory Statistics:" >> $data_file
+/usr/bin/free -m >> $data_file
+
+# Serpent Processor Info
+/bin/echo "Serpent Processor Info" >> $data_file
+/bin/cat /proc/cpuinfo >> $data_file
+
+#capture ip info including MAC address since this is a good identifier for debugging connections to server...
+/bin/echo "Serpent Network Data" >> $data_file
+/sbin/ifconfig eth0 >> $data_file
+
+# Debug!!! Show contents of the scripts folder on registration.
+/bin/ls -al /opt/trunk/mythos/medusa/remote-scripts/${sync_dir}/scripts/ >> $data_file
+
+#create reports directory on master
+#until /usr/bin/ssh medusa_gorgon "mkdir -p /opt/trunk/mythos/seshat/clients/${HOST}.${DOMAIN}/"
+#  do
+#    sleep 60
+#  done
+
+#/usr/bin/ssh -o ConnectTimeout=10 medusa_gorgon "mkdir -p /opt/trunk/mythos/seshat/clients/${HOST}.${DOMAIN}"
+
+#log to server
+#until /usr/bin/scp $data_file medusa_gorgon:$data_file
+#  do
+#    sleep 60
+#  done
+
+# Register client data to server node
+/usr/bin/scp -o ConnectTimeout=10 -r $client_dir medusa_gorgon:$client_dir
+
+# Create outage log file
+touch $medusa_home/seshal/clients/${HOST}.{DOMAIN}/${HOST}.${DOMAIN}_outages.log
+
+# Start outage log watcher
+$medusa_home/smokeping/alert_outage.sh

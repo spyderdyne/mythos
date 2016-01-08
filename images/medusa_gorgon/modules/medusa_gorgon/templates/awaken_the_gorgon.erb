@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# Copyright 2015 Cisco Systems, Inc.  All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+#
+#author:  James Scollard
+#email:  jscollar@cisco.com
+#source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
+
+source ../../set_environment.sh
+
+/bin/echo "The Gorgon Awakens..."
+/bin/echo " "
+/bin/echo "'If you wish a battle, I shall give it. I am the last of my kind. I shall not lie down without a fight.'
+― Libba Bray, The Sweet Far Thing"
+/bin/echo " "
+
+#register clients
+/bin/echo "Registering Serpent Nodes to the Gorgon..."
+/bin/mv $medusa_home/remote-scripts/.client-init.sh $medusa_home/remote-scripts/client-init.sh
+#/bin/sleep 300
+
+
+#perform private hosts discovery
+/bin/echo "Rallying Serpent Nodes using NMAP discovery of Local Subnets..."
+/bin/mv $medusa_home/remote-scripts/.client-discovery.sh $medusa_home/remote-scripts/client-discovery.sh
+#/bin/sleep 300
+
+#start phoromatic server and web interface
+echo "Bringing up Phoronix Server Components"
+echo "Using config in ~/.phoronix-test-suite/user-config.xml..."
+/usr/bin/phoronix-test-suite make-download-cache
+/usr/bin/phoronix-test-suite start-phoromatic-server
+echo "PTS Components Started.  Check the logs for Details..."

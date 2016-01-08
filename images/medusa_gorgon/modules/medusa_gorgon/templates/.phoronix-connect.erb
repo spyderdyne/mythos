@@ -1,0 +1,42 @@
+#!/bin/bash
+# Copyright 2015 Cisco Systems, Inc.  All rights reserved.
+#
+#    Licensed under the Apache License, Version 2.0 (the "License"); you may
+#    not use this file except in compliance with the License. You may obtain
+#    a copy of the License at
+#
+#         http://www.apache.org/licenses/LICENSE-2.0
+#
+#    Unless required by applicable law or agreed to in writing, software
+#    distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+#    WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+#    License for the specific language governing permissions and limitations
+#    under the License.
+#
+#author:  James Scollard
+#email:  jscollar@cisco.com
+#source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythosexport
+#
+# Connect phoronix clients to the server node and send to background.  Note that user
+# key may or may not be available at image creation time, and will need to be filled in
+# before slaves can be connected.  Be sure to correct this setting prior to making this
+# script available to clients.
+#
+
+source ../../../../../set-environment.sh
+
+sleep $[ ( $RANDOM % 200 )  + 1 ]s
+
+timestamp=$(date -u)
+
+until /usr/bin/phoronix-test-suite phoromatic.connect <%= @medusa_master_ip %>:<%= phoronix_master_port %>/<%= @phoronix_user_key %> $2>1 &
+  do
+    sleep 30
+  done
+
+echo "$timestamp Client $HOSTNAME connected to Phoromatic Server at <%= @medusa_master_ip %>:<%= phoronix_master_port %>" >> /opt/trunk/mythos/seshat/clients/$HOSTNAME/phoromatic_registration.dat
+
+until scp /opt/trunk/mythos/seshat/clients/$HOSTNAME/phoromatic_registration.dat medusa_gorgon:/opt/trunk/mythos/seshat/$HOSTNAME/phoromatic_registration.dat
+  do
+    sleep 10
+  done
