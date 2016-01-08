@@ -17,7 +17,7 @@
 # Medusa image creation script.  Execute this to generate master and slave
 # images for upload to your cloud provider in the proper format.
 #
-# This script currently requires Virtualbox to run
+#
 #
 # author:  James Scollard
 # email:  jscollar@cisco.com
