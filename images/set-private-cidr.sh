@@ -20,24 +20,24 @@
 #
 # Sets the master "floating" IP address that will be assigned to the master server
 
-echo "please input the IP address you want to use for your master node.  This address must be accessible by your slave instances:  " 
+echo "Please input the network CIDR address of your private, VPC, or overlay network.  This private range will be used for all client instances:  "
 
-read master_float
+read private_cidr
 
 source ../set-environment.sh
 
 # Set the base environment setting if the master IP has changed
-if [ $master_float = $medusa_master_ip ]
+if [ $private_cidr = $medusa_private_cidr ]
   then
     echo "Master IP Address Already set!  Moving on..."
   else
-    sed -i "s/$medusa_master_ip/$master_float/g" "$mythos_home/set-environment.sh"
-    echo "The master IP address has been updated to $master_float"
+    sed -i "s/$medusa_egress_gateway/$egress_gateway/g" "$mythos_home/set-environment.sh"
+    echo "The master IP address has been updated to $egress_gateway"
 fi
 
 # Set Puppet manifests with the proper IP addresses
-sed -i "s/replace_ip_address/$master_float/g" "medusa_gorgon/modules/medusa_gorgon/manifests/init.pp"
+#sed -i "s/replace_private_cidr/$private_cidr/g" "medusa_gorgon/modules/medusa_gorgon/manifests/init.pp" #not currently used...
 
-sed -i "s/replace_ip_address/$master_float/g" "medusa_serpent/modules/medusa_serpent/manifests/init.pp"
+sed -i "s/replace_private_cidr/$private_cidr/g" "medusa_serpent/modules/medusa_serpent/manifests/init.pp"
 
-echo "You have successfully set the Master IP address for your images to $master_float."
+echo "You have successfully set the Master IP address for your images to $private_cidr.  Proceeding to image creation..."

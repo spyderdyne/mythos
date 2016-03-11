@@ -1,0 +1,10 @@
+*** Alerts ***
+to = jscollard@cisco.com
+from = serpent_admin@gmail.com
+
++anyLoss
+type = loss
+# in percent
+pattern = >0%,*12*,>0%,*12*,>0%
+to = |/opt/trunk/mythos/medusa/smokeping/outage.sh
+comment = loss 2 times in a row

@@ -1,0 +1,22 @@
+*** Targets ***
+
+probe = FPing
+
+menu = Top
+title = $HOSTNAME Network Latency Grapher
+#Here you will learn all about the latency of our network.
+
+#parents = owner:/Test/Whoever location:/
++ mysite1
+menu = Local Gateway Router 1
+title = Private Overlay Gateway
+
+++ myhost1
+host = <%= @medusa_private_gateway %>
+
++ mysite2
+menu = Upstream Gateway Router 1
+title = Data Center Public Floating Gateway
+
+++ myhost2
+host = <%= @medusa_upstream_gateway_ip %>

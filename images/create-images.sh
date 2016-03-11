@@ -36,7 +36,7 @@ SERPENT_IMAGE_URI='https://cloud-images.ubuntu.com/vagrant/vivid/current/vivid-s
 #set_mythos_home
 #add_source_variables
 
-#MYTHOS_HOME='/opt/trunk/mythos' <- replaced in foavor of sourcing the set-environment.sh file
+#MYTHOS_HOME='/opt/trunk/mythos' <- replaced in favor of sourcing the set-environment.sh file
 
 #Configure the master endpoint address
 printf "Your new client image will need to know where the master node can\n
@@ -53,6 +53,46 @@ read -p "Would you like to set the master address at this time? (Y/n): " set_mas
     Y|y) ( exec "./set-master-address.sh" ) ;;
 
     N|n) echo "Please make sure to set it later or your instances will not know who to talk to..." ;;
+
+      *) echo "Please choose Y or n. "
+         exit 1
+         ;;
+  esac
+
+#Configure the private networks CIDR address range
+printf "Please specify the private network that your client machines\n
+will be attached to.  Use CIDR notation.  This setting dictates the\n
+network range that will be scanned for client discovery.\n"
+
+exec "./verify_private_cidr.sh"
+
+read -p "Would you like to set the master address at this time? (Y/n): " set_private_cidr
+  case $set_private_cidr in
+
+    Y|y) ( exec "./set-private-cidr.sh" ) ;;
+
+    N|n) echo "Please make sure to set it later or your instances will not be able to find each other for testing..." ;;
+
+      *) echo "Please choose Y or n. "
+         exit 1
+         ;;
+  esac
+
+#Configure the public egress gateway
+printf "Please specify the next hop after your private default gateway.\n
+This setting provides alerting of downtime events in your stack\n
+that would prevent internet access.  Please input an ip address inside your\n
+edge to prevent client machines from performing a DDOS attack on someone\n
+else's IP address."
+
+exec "./verify-egress-gateway.sh"
+
+read -p "Would you like to set the master address at this time? (Y/n): " set_egress_gateway
+  case $set_egress_gateway in
+
+    Y|y) ( exec "./set-egress-gateway.sh" ) ;;
+
+    N|n) echo "Please make sure to set it later or your instances will not be able to find each other for testing..." ;;
 
       *) echo "Please choose Y or n. "
          exit 1

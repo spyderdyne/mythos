@@ -4,30 +4,44 @@
 #script for details.
 class medusa_serpent {
 
-  $medusa_master_ip     = 'replace_ip_address' #You need to identify and set the globally reachable IP address of your Medusa server prior to generating images.
+  $medusa_master_ip           = 'replace_ip_address' #You need to identify and set the globally reachable IP address of your Medusa server prior to generating images.
 
-  $phoronix_wsgi_port   = '8089' #Phoronix web socket port
-  $phoronix_master_port = '8088' #Phoronix Server Communicaiton Port
-  $phoronix_www_port    = '8081' #Phoronix Web Portal
-  $medusa_master_port   = '8080' #Medusa Web Portal for Script Hosting
-  $medusa_slave_port    = '80'   #Medusa Client web site for testing
+  $phoronix_wsgi_port         = '8089' #Phoronix web socket port
+  $phoronix_master_port       = '8088' #Phoronix Server Communicaiton Port
+  $phoronix_www_port          = '8081' #Phoronix Web Portal
+  $medusa_master_port         = '8080' #Medusa Web Portal for Script Hosting
+  $medusa_slave_port          = '80'   #Medusa Client web site for testing
+  $medusa_egress_gateway      = 'replace_gateway_address' #Cloud egress internal IP address
+  $medusa_private_cidr        = 'replace_private_cidr' #The CIDR of the private (overlay) subnet for your tenants/accounts
 
-  $service_password     = 'Thewheelsonthebusgoroundandround2015!'
+  $service_password           = 'Thewheelsonthebusgoroundandround2015!'
 
   exec { 'apt-get update':
     path => '/usr/bin',
   }
   package { 'apache2':
-  ensure  => present,
-  require => Exec['apt-get update'],
+    ensure  => present,
+    require => Exec['apt-get update'],
   }
   service { 'apache2':
     ensure  => 'running',
     require => Package['apache2'],
   }
+  #package { 'inotify-tools':
+  #  ensure => present,
+  #  require => Exec['apt-get update'],
+  #}
   package { 'nmap':
     ensure => present,
     require => Exec['apt-get update'],
+  }
+  package { 'smokeping':
+    ensure  => present,
+    require => Exec['apt-get update'],
+  }
+  service { 'smokeping':
+    ensure  => 'running',
+    require => Package['smokeping'],
   }
   file { '/etc/apache2/sites-available/000-default.conf':
     ensure  => file,
@@ -53,6 +67,51 @@ class medusa_serpent {
   group   => 'root',
   mode    => '0644',
   }
+  #file { '/etc/smokeping/config.d/Alerts':
+  #  ensure  => present,
+  #  require => Package['smokeping'],
+  #  notify  => Service['smokeping'],
+  #  content => template('medusa_serpent/smokeping-alerts.erb'),
+  #  owner   => 'root',
+  #  group   => 'root',
+  #  mode    => '0644',
+  #}
+  #file { '/etc/smokeping/config.d/Database':
+  #  ensure  => present,
+  #  require => Package['smokeping'],
+  #  notify  => Service['smokeping'],
+  #  content => template('medusa_serpent/smokeping-database.erb'),
+  #  owner   => 'root',
+  #  group   => 'root',
+  #  mode    => '0644',
+  #}
+  #file { '/etc/smokeping/config.d/General':
+  #  ensure  => present,
+  #  require => Package['smokeping'],
+  #  notify  => Service['smokeping'],
+  #  content => template('medusa_serpent/smokeping-general.erb'),
+  #  owner   => 'root',
+  #  group   => 'root',
+  #  mode    => '0644',
+  #}
+  #file { '/etc/smokeping/config.d/Probes':
+  #  ensure  => present,
+  #  require => Package['smokeping'],
+  #  notify  => Service['smokeping'],
+  #  content => template('medusa_serpent/smokeping-probes.erb'),
+  #  owner   => 'root',
+  #  group   => 'root',
+  #  mode    => '0644',
+  #}
+  #file { '/etc/smokeping/config.d/Targets':
+  #  ensure  => present,
+  #  require => Package['smokeping'],
+  #  notify  => Service['smokeping'],
+  #  content => template('medusa_serpent/smokeping-targets.erb'),
+  #  owner   => 'root',
+  #  group   => 'root',
+  #  mode    => '0644',
+  #}
   file { '/opt/trunk/':
     ensure => directory,
     owner  => 'root',
@@ -110,6 +169,12 @@ class medusa_serpent {
     ensure => present,
     require => Exec['fetch-phoronix-stable'],
   }
+  #exec { 'install-smokeping-deps':
+  #  command => 'apt-get install -y fping libauthen-radius-perl libnet-ldap-perl libnet-dns-perl libio-socket-ssl-perl libnet-telnet-perl libsocket6-perl libio-socket-inet6-perl',
+  #  path    => '/bin:/sbin:/usr/bin:/usr/local/sbin:/usr/sbin',
+  #  require => Package['smokeping'],
+  #  notify  => Service['smokeping'],
+  #}
   #May not be needed with the new version...
   exec { 'install-phoronix-deps':
     command => 'apt-get install -y libgd3 libxpm4 php5-cli php5-common php5-gd php5-json php5-readline php5-json',
@@ -133,6 +198,11 @@ class medusa_serpent {
     command => 'echo "y n n" | phoronix-test-suite',
     path    => '/bin/:/usr/bin/',
     require => Exec['install-phoronix'],
+  }
+  exec { 'phoronix-clean-clients':
+    command => 'rm -rf /var/lib/phoronix-test-suite/core.pt2so',
+    path    => '/bin/',
+    require => Exec['phoronix-first-run'],
   }
   file { '/var/lib/phoronix-test-suite/user-config.xml':
     ensure  => file,
@@ -184,5 +254,20 @@ class medusa_serpent {
     minute  => '*/10',
     require => File['/opt/trunk/mythos/medusa/master-commander.sh'],
   }
-
+  #cron { 'update_cron': #<<< Can this be removed now?
+  #  ensure  => 'present',
+  #  command => '/opt/trunk/mythos/medusa/update-status.sh',
+  #  user    => 'root',
+  #  hour    => '*',
+  #  minute  => '*/30',
+  #  require => File['/opt/trunk/mythos/medusa/update-status.sh'],
+  #}
+  #cron { 'reporting_update':
+  #  ensure  => 'present',
+  #  command => '/opt/trunk/mythos/medusa/smokeping/update_outage_report.sh',
+  #  user    => 'root',
+  #  hour    => '*',
+  #  minute  => '*/30',
+  #  require => File['/opt/trunk/mythos/medusa/update-status.sh'],
+  #}
 }

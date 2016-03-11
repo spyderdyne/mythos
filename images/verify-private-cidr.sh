@@ -17,17 +17,13 @@
 #email:  jscollar@cisco.com
 #source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
 #
-# Displays the current master "floating" IP address that will be assigned to the master server.
+# Displays the current private, VPC, or overlay CIDR for hosts discovery to build test plans.
 
 source ../set_environment.sh
 
-gorgon_master_address=$(cat $mythos_home/images/medusa_gorgon/modules/medusa_gorgon/manifests/init.pp | grep master_ip)
-serpent_master_address=$(cat $mythos_home/images/medusa_serpent/modules/medusa_serpent/manifests/init.pp | grep master_ip)
-
-#display master address
-echo "Gorgon public address as set in Gorgon module config: $gorgon_master_address"
+serpent_private_cidr=$(cat $mythos_home/images/medusa_serpent/modules/medusa_serpent/manifests/init.pp | grep private_cidr)
 
 #display serpent address
-echo "Gorgon public address as set in Serpent module config: $serpent_master_address"
+echo "NMap private address as set in Serpent module config: $serpent_private_cidr"
 
 

@@ -1,0 +1,27 @@
+#!/bin/bash -x
+
+# provides: nuclear-option.sh
+
+# nuclear-option.sh removes records of old bash scripts previously executed
+# on medusa-client hosts.  Be sure that only the scripts you wish to rerun
+# are present in the Gorgon server remote-scripts directory and all others
+# are renamed to .filename or you may cause serious issues, have clients
+# double register, cats and dogs living together in sin, etc...
+
+#TEMPORARY!!!
+/bin/chmod +x /opt/trunk/mythos/set-environment.sh
+
+#set random timer to prevent all hosts from executing at the same time
+sleep $[ ( $RANDOM % 180 )  + 1 ]s
+
+source ../../../../set-environment.sh
+
+#remove old .bak files
+/bin/rm -rf $medusa_home/remote-scripts/<%= @medusa_master_ip %>/scripts/*.bak
+
+#update from bzr repo (optional)
+#(cd $mythos_home && /usr/bin/bzr update)
+
+/bin/rm -rf $mythos_home/seshat/clients/*
+
+ echo "/sbin/reboot" | at now + 1 minute

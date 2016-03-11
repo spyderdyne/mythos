@@ -208,13 +208,13 @@ class medusa_gorgon {
     returns => ['0','126'],
   }
   exec { 'install-phoronix-tests':
-    command => 'phoronix-test-suite batch-install pts/C-Ray pts/pybench-1.0.0 pts/stream pts/tiobench-1.1.0 pts/network-loopback-1.0.1',
+    command => 'phoronix-test-suite batch-install pts/C-Ray pts/pybench-1.0.0 pts/stream pts/tiobench-1.1.0 pts/network-loopback-1.0.1 pts/fio-1.8.2',
     path    => '/usr/bin/',
     require => Exec['start-phoronix-cache'],
     returns => ['0','126'],
   }
   exec { 'start-phoronix-cache':
-    command => 'phoronix-test-suite make-download-cache pts/C-Ray pts/pybench-1.0.0 pts/stream pts/tiobench-1.1.0 pts/network-loopback-1.0.1',
+    command => 'phoronix-test-suite make-download-cache pts/C-Ray pts/pybench-1.0.0 pts/stream pts/tiobench-1.1.0 pts/network-loopback-1.0.1 pts/fio-1.8.2',
     path    => '/usr/bin/',
     require => Exec['start-phoronix-server'],
     returns => ['0','126'],
@@ -276,6 +276,14 @@ class medusa_gorgon {
     group   => 'root',
     mode    => '755',
     content => template('medusa_gorgon/.phoronix-connect.erb.erb'),
+    require => File['/var/www/html/medusa/scripts/'],
+  }
+  file { '/opt/trunk/mythos/medusa/remote-scripts/.nuclear-option.sh':
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '755',
+    content => template('medusa_gorgon/.nuclear-option.erb'),
     require => File['/var/www/html/medusa/scripts/'],
   }
 }

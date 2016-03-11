@@ -17,17 +17,12 @@
 #email:  jscollar@cisco.com
 #source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
 #
-# Displays the current master "floating" IP address that will be assigned to the master server.
+# Uses inotify to monitor the outage log for appends, and notifies the server node if
+# an outage occurs.
 
-source ../set_environment.sh
+source ../../set-environment.sh
 
-gorgon_master_address=$(cat $mythos_home/images/medusa_gorgon/modules/medusa_gorgon/manifests/init.pp | grep master_ip)
-serpent_master_address=$(cat $mythos_home/images/medusa_serpent/modules/medusa_serpent/manifests/init.pp | grep master_ip)
-
-#display master address
-echo "Gorgon public address as set in Gorgon module config: $gorgon_master_address"
-
-#display serpent address
-echo "Gorgon public address as set in Serpent module config: $serpent_master_address"
-
-
+while inotifywait -q -e modify $mythos_home/seshat/clients/$HOSTNAME/${HOSTNAME}_outages.log >/dev/null; do
+    /bin/sleep $[ ( $RANDOM % 600 )  + 1 ]s # sleep random time up to 10 minutes to prevent server crashes and lockups
+    rsync $mythos_home/seshat/clients/$HOSTNAME/${HOSTNAME}_outages.log medusa_gorgon:$mythos_home/seshat/clients/$HOSTNAME/${HOSTNAME}_outages.log
+done

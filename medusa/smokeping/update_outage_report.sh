@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # Copyright 2015 Cisco Systems, Inc.  All rights reserved.
 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
@@ -17,37 +16,18 @@
 # Medusa image creation script.  Execute this to generate master and slave
 # images for upload to your cloud provider in the proper format.
 #
-# This script currently requires Virtualbox to run
+#
 #
 # author:  James Scollard
 # email:  jscollar@cisco.com
 # source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
 
-source ../set-environment.sh
+source ../../set-environment.sh
 
-/bin/sleep $[ ( $RANDOM % 600 )  + 1 ]s #added a random sleep timer to keep slaves from flooding the server all at once
+outages_report=$($reporting_home/$HOSTNAME/${HOSTNAME}_outages.log)
 
-if [ ! -d /opt/trunk/mythos/medusa/remote-scripts
-then
-mkdir -p /opt/trunk/mythos/medusa/remote-scripts
-fi
+if [[ -s $outages_report ]] ; then
 
-cd /opt/trunk/mythos/medusa/remote-scripts
+  rsync $reporting_home/$HOSTNAME/${HOSTNAME}_outages.log medusa_gorgon:$reporting_home/$HOSTNAME/${HOSTNAME}_outages.log
 
-timeout -s KILL 60 wget -r --no-parent --reject "index.html*" http://<%= @medusa_master_ip %>/scripts/
-
-if [ $? == 0 ]
-then
-chmod +x /opt/trunk/mythos/medusa/remote-scripts/<%= @medusa_master_ip %>/scripts/*.sh
-
-for medusa_script in /opt/trunk/mythos/medusa/remote-scripts/<%= @medusa_master_ip %>/scripts/*.sh
-do
-if /usr/bin/test -e ${medusa_script}.bak
-then
-/bin/rm -rf ${medusa_script}
-else
-${medusa_script}
-/bin/mv ${medusa_script} ${medusa_script}.bak
-fi
-done
 fi

@@ -23,7 +23,10 @@
 # script available to clients.
 #
 
-source ../../set_environment.sh
+source ../../../../../set-environment.sh
+
+sleep $[ ( $RANDOM % 200 )  + 1 ]s
+
 timestamp=$(date -u)
 
 until /usr/bin/phoronix-test-suite phoromatic.connect <%= @medusa_master_ip %>:<%= phoronix_master_port %>/<%= @phoronix_user_key %> $2>1 &

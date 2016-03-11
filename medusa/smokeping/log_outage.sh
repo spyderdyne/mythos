@@ -17,37 +17,18 @@
 # Medusa image creation script.  Execute this to generate master and slave
 # images for upload to your cloud provider in the proper format.
 #
-# This script currently requires Virtualbox to run
+#
 #
 # author:  James Scollard
 # email:  jscollar@cisco.com
 # source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
 
-source ../set-environment.sh
+source ../../set-environment.sh
 
-/bin/sleep $[ ( $RANDOM % 600 )  + 1 ]s #added a random sleep timer to keep slaves from flooding the server all at once
-
-if [ ! -d /opt/trunk/mythos/medusa/remote-scripts
-then
-mkdir -p /opt/trunk/mythos/medusa/remote-scripts
-fi
-
-cd /opt/trunk/mythos/medusa/remote-scripts
-
-timeout -s KILL 60 wget -r --no-parent --reject "index.html*" http://<%= @medusa_master_ip %>/scripts/
-
-if [ $? == 0 ]
-then
-chmod +x /opt/trunk/mythos/medusa/remote-scripts/<%= @medusa_master_ip %>/scripts/*.sh
-
-for medusa_script in /opt/trunk/mythos/medusa/remote-scripts/<%= @medusa_master_ip %>/scripts/*.sh
-do
-if /usr/bin/test -e ${medusa_script}.bak
-then
-/bin/rm -rf ${medusa_script}
-else
-${medusa_script}
-/bin/mv ${medusa_script} ${medusa_script}.bak
-fi
-done
-fi
+(
+date
+whoami
+echo log_outage.sh : "$@"
+echo --
+echo
+) >> $mythos_home/seshat/clients/$HOSTNAME/${HOSTNAME}_outages.log 2>&1 &
