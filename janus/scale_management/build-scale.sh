@@ -17,7 +17,7 @@
 # author:  David Oyler
 # email:  doyler@cisco.com
 # source: https://code.launchpad.net/~openstack-tailgate/openstack-tailgate/mythos
-# source: https://github.com/spyderdyne/mythos/blob/master/janus/scale_management/build-scale.sh
+# source: https://github.com/spyderdyne/mythos/blob/master/janus/scale_management/
 #
 # creates projects, networks, routers, etc. for scale testing
 
